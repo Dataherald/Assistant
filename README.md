@@ -83,4 +83,42 @@ class RunSQLQuery(Function):
         return '\n'.join([str(result) for result in results])
 ```
 
+#### Assistant Creation
+
+To create an Assistant, you must create an object of the `Assistant` class. The constructor of the class accepts the following parameters:
+1. instruction (str): Instructions for the Assistant.
+2. model (str): The model to be used by the Assistant.
+3. use_retrieval (bool, optional): Whether to use retrieval tools. Defaults to False.
+4. use_code_interpreter (bool, optional): Whether to use a code interpreter. Defaults to False.
+5. file_ids (list[str], optional): List of file IDs passed to the ass. Defaults to None.
+6. functions (list[Function], optional): List of Function instances the Assistant can use. Defaults to None.
+7. assistant_name (str, optional): Name of the Assistant. Defaults to "AI Assistant".
+8. assistant_description (str, optional): Description of the Assistant. Defaults to "An AI Assistant".
+9. verbose (bool, optional): Enable verbose output. Defaults to False.
+
+```python
+assistant = AIAssistant(
+    instruction="You are a SQL expert. User asks you questions about the Chinook database.",
+    model="gpt-3.5-turbo-1106",
+    functions=[RunSQLQuery()],
+    use_code_interpreter=True,
+    )
+```
+
+### Contribution
+
+Contributions are what make the open-source community such an amazing place to learn, inspire, and create. Any contributions you make are **greatly appreciated**.
+
+If you have a suggestion that would make this better, please fork the repo and create a pull request. You can also simply open an issue with the tag "enhancement".
+
+Don't forget to give the project a star! Thanks again!
+
+#### How to Contribute
+
+1. **Fork the Project**: Click on the 'Fork' button at the top right corner of the repository page to create a copy of this project on your GitHub account.
+2. **Create your Feature Branch**: In your forked repository, create a new branch for your feature using the command `git checkout -b feature/AmazingFeature`.
+3. **Commit your Changes**: Make the desired changes in your branch and commit them using `git commit -m 'Add some AmazingFeature'`.
+4. **Push to the Branch**: Upload your changes to GitHub using `git push origin feature/AmazingFeature`.
+5. **Open a Pull Request**: Go to the 'Pull requests' tab in the original repository and click on 'New pull request'. Select your feature branch and submit the pull request with a description of your changes.
+
 
