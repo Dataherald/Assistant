@@ -1,30 +1,40 @@
 from abc import abstractmethod
 
-class Property():
+
+class Property:
     name: str
     type: str
     required: bool = True
     description: str = None
-    def __init__(self, name: str, type: str, required: bool = True, description: str = None):
+
+    def __init__(
+        self, name: str, type: str, required: bool = True, description: str = None
+    ):
         self.name = name
         self.type = type
         self.required = required
         self.description = description
 
-class FunctionCall():
+
+class FunctionCall:
+    call_id: str
     name: str
     arguments: dict
-    def __init__(self, name: str, arguments: dict):
+
+    def __init__(self, call_id: str, name: str, arguments: dict = None):
+        self.call_id = call_id
         self.name = name
         self.arguments = arguments
 
 
-class Function():
-
+class Function:
     name: str
     description: str = None
     parameters: list[Property] = None
-    def __init__(self, name: str, description: str = None, parameters: list[Property] = None):
+
+    def __init__(
+        self, name: str, description: str = None, parameters: list[Property] = None
+    ):
         self.name = name
         self.description = description
         self.parameters = parameters
@@ -35,11 +45,14 @@ class Function():
             "description": self.description,
             "parameters": {
                 "type": "object",
-                "properties": {p.name: {"type": p.type, "description": p.description} for p in self.parameters},
-                "required": [p.name for p in self.parameters if p.required]
-            }   
+                "properties": {
+                    p.name: {"type": p.type, "description": p.description}
+                    for p in self.parameters
+                },
+                "required": [p.name for p in self.parameters if p.required],
+            },
         }
-    
+
     def run(self, function_call: FunctionCall = None):
         if function_call is None and self.parameters is not None:
             raise Exception("Missing parameters")
@@ -51,9 +64,13 @@ class Function():
             for p in self.parameters:
                 if p.name not in function_call.arguments and p.required:
                     raise Exception(f"Missing parameter {p.name}")
-                if p.name in function_call.arguments and not isinstance(function_call.arguments[p.name], p.type):
-                    raise Exception(f"Invalid type for parameter {p.name}")
             return self.function(**function_call.arguments)
+
+    def run_catch_exceptions(self, function_call: FunctionCall = None):
+        try:
+            return self.run(function_call=function_call)
+        except Exception as e:
+            return str(e)
 
     @abstractmethod
     def function(self, **kwargs):
