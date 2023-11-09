@@ -29,7 +29,7 @@ class Function():
         self.description = description
         self.parameters = parameters
 
-    def __dict__(self):
+    def to_dict(self):
         return {
             "name": self.name,
             "description": self.description,
