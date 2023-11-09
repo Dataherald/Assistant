@@ -34,6 +34,8 @@ To get started with this project, please follow the instructions below.
     pip install -r requirements.txt
     ```
 
+4. Create a .env file and set OPENAI_API_KEY = "your_api_key_here"
+
 ### Usage
 
 This repository allows you to create custom functions that can be integrated with an AI Assistant. Below is an example of how to set up a custom function and use it with the Assistant.
