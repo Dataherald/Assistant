@@ -40,6 +40,16 @@ class Function:
         self.parameters = parameters
 
     def to_dict(self):
+        if self.parameters is None:
+            return {
+                "name": self.name,
+                "description": self.description,
+                "parameters": {
+                    "type": "object",
+                    "properties": {},
+                    "required": [],
+                },
+            }
         return {
             "name": self.name,
             "description": self.description,
@@ -54,11 +64,11 @@ class Function:
         }
 
     def run(self, function_call: FunctionCall = None):
-        if function_call is None and self.parameters is not None:
+        if function_call.arguments == {} and self.parameters is not None:
             raise Exception("Missing parameters")
-        if function_call is None and self.parameters is None:
+        if function_call.arguments == {} and self.parameters is None:
             return self.function()
-        if function_call is not None and self.parameters is None:
+        if function_call.arguments != {} and self.parameters is None:
             raise Exception("Unexpected parameters")
         if function_call is not None and self.parameters is not None:
             for p in self.parameters:

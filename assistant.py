@@ -5,8 +5,18 @@ from openai.types.beta import Thread, Assistant
 from openai.types.beta.threads import Run, ThreadMessage
 from yaspin import yaspin
 import json
+import random
 import time
 
+
+PRINT_COLORS = [
+    '\033[31m',
+    '\033[32m',
+    '\033[33m',
+    '\033[34m',
+    '\033[35m',
+    '\033[36m',
+]
 
 class Message:
     thread_id: str
@@ -73,7 +83,7 @@ class AIAssistant:
         self.assistant_description = assistant_description
         self.tools = [
             {"type": "function", "function": f.to_dict()} for f in self.functions
-        ]
+        ] if self.functions else []
         if self.use_retrieval:
             self.tools.append({"type": "retrieval"})
         if self.use_code_interpreter:
@@ -115,12 +125,14 @@ class AIAssistant:
                 if function.name == function_name:
                     tool_found = True
                     if self.verbose:
-                        print(f"\n{function_name} functions has called by assistant",)
+                        random_color = random.choice(PRINT_COLORS)
+                        print(f'\n{random_color}{function_name} function has called by assistant with the following arguments: {function_arguments}')
                     response = function.run_catch_exceptions(
                         function_call=function_call
                     )
                     if self.verbose:
-                        print(f"\n{function_name} response: {response}")
+                        random_color = random.choice(PRINT_COLORS)
+                        print(f"{random_color}Function {function_name} responsed: {response}")
                     tool_outputs.append(
                         {
                             "tool_call_id": call_id,
@@ -129,7 +141,8 @@ class AIAssistant:
                     )
             if not tool_found:
                 if self.verbose:
-                    print(f"\nFunction {function_name} called by assistant not found")
+                    random_color = random.choice(PRINT_COLORS)
+                    print(f"{random_color}Function {function_name} alled by assistant not found")
                 tool_outputs.append(
                     {
                         "tool_call_id": call_id,
@@ -156,6 +169,9 @@ class AIAssistant:
                 )
             )
         return self.conversation.print_conversation()
+    
+    def list_files(self):
+        return self.client.files.list().data
 
     def format_message(self, message: ThreadMessage) -> str:
         message_content = message.content[0].text
@@ -225,6 +241,7 @@ class AIAssistant:
                         tool_outputs=tool_outputs,
                     )
                 if self.verbose:
-                    print(f"\nRun status: {run.status}")
+                    random_color = random.choice(PRINT_COLORS)
+                    print(f"\n{random_color}Run status: {run.status}")
                 time.sleep(0.5)
         return "\n" + self.extract_run_message(run=run, thread_id=thread_id)
