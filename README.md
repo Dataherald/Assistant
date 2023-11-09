@@ -59,6 +59,8 @@ Finally, you have to implement the function method, which will be called when th
 Below is an example of a custom function that runs a SQL query on the Chinook database.
 
 ```python
+from function import Function, Property
+
 class RunSQLQuery(Function):
     def __init__(self):
         super().__init__(
@@ -97,6 +99,8 @@ To create an Assistant, you must create an object of the `Assistant` class. The 
 9. verbose (bool, optional): Enable verbose output. Defaults to False.
 
 ```python
+from assistant import AIAssistant
+
 assistant = AIAssistant(
     instruction="You are a SQL expert. User asks you questions about the Chinook database.",
     model="gpt-3.5-turbo-1106",
