@@ -49,7 +49,7 @@ if __name__ == "__main__":
     instruction="You are a SQL expert. User asks you questions about the Chinook database.",
     model="gpt-3.5-turbo-1106",
     functions=[GetDBSchema(), RunSQLQuery()],
-    verbose=True
+    use_code_interpreter=True,
     )
     thread = assistant.create_thread()
     user_input = ""

@@ -116,7 +116,10 @@ class AIAssistant:
         for tool in run.required_action.submit_tool_outputs.tool_calls:
             tool_found = False
             function_name = tool.function.name
-            function_arguments = json.loads(tool.function.arguments)
+            if tool.function.arguments:
+                function_arguments = json.loads(tool.function.arguments)
+            else:
+                function_arguments = {}
             call_id = tool.id
             function_call = FunctionCall(
                 call_id=call_id, name=function_name, arguments=function_arguments
@@ -172,9 +175,17 @@ class AIAssistant:
     
     def list_files(self):
         return self.client.files.list().data
-
+    
+    def create_file(self, filename: str, file_id: str):
+        content = self.client.files.retrieve_content(file_id)
+        with open(filename.split("/")[-1], 'w') as file:
+            file.write(content)
+        
     def format_message(self, message: ThreadMessage) -> str:
-        message_content = message.content[0].text
+        if getattr(message.content[0], "text", None) is not None:
+            message_content = message.content[0].text
+        else:
+            message_content = message.content[0]
         annotations = message_content.annotations
         citations = []
         for index, annotation in enumerate(annotations):
@@ -189,8 +200,9 @@ class AIAssistant:
             elif file_path := getattr(annotation, "file_path", None):
                 cited_file = self.client.files.retrieve(file_path.file_id)
                 citations.append(
-                    f"[{index}] download {cited_file.filename} with id {cited_file.id}"
+                    f"[{index}] file: {cited_file.filename} is downloaded"
                 )
+                self.create_file(filename=cited_file.filename, file_id=cited_file.id)
 
         message_content.value += "\n" + "\n".join(citations)
         return message_content.value
