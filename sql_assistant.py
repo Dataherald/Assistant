@@ -46,8 +46,11 @@ class RunSQLQuery(Function):
     
 if __name__ == "__main__":
     assistant = AIAssistant(
-    instruction="You are a SQL expert. User asks you questions about the Chinook database.",
-    model="gpt-3.5-turbo-1106",
+    instruction="""
+You are a SQL expert. User asks you questions about the Chinook database.
+First obtain the schema of the database to check the tables and columns, then generate SQL queries to answer the questions.
+""",
+    model="gpt-4-1106-preview",
     functions=[GetDBSchema(), RunSQLQuery()],
     use_code_interpreter=True,
     )
