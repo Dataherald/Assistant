@@ -1,43 +1,24 @@
-from abc import abstractmethod
+from abc import ABC, abstractmethod
+from pydantic import BaseModel
+from typing import Optional, Dict, List
 
-
-class Property:
+class Property(BaseModel):
     name: str
     type: str
     required: bool = True
-    description: str = None
-
-    def __init__(
-        self, name: str, type: str, required: bool = True, description: str = None
-    ):
-        self.name = name
-        self.type = type
-        self.required = required
-        self.description = description
+    description: Optional[str] = None
 
 
-class FunctionCall:
+class FunctionCall(BaseModel):
     call_id: str
     name: str
-    arguments: dict
-
-    def __init__(self, call_id: str, name: str, arguments: dict = None):
-        self.call_id = call_id
-        self.name = name
-        self.arguments = arguments
+    arguments: Optional[Dict] = None
 
 
-class Function:
+class Function(BaseModel, ABC):
     name: str
-    description: str = None
-    parameters: list[Property] = None
-
-    def __init__(
-        self, name: str, description: str = None, parameters: list[Property] = None
-    ):
-        self.name = name
-        self.description = description
-        self.parameters = parameters
+    description: Optional[str] = None
+    parameters: Optional[List[Property]] = None
 
     def to_dict(self):
         if self.parameters is None:
