@@ -119,6 +119,21 @@ You can start chatting with the assistant by simply calling the chat() function 
 assistant.chat()
 ```
 
+#### Using retrieval tool
+
+Using retireval tool is very simple, just enable the retrieval and upload your file, then pass it to the chat function as follows:
+
+```python
+assistant = AIAssistant(
+    instruction=""" You are a helpful agent that helps user with their question about LLMs.""",
+    model="gpt-4-1106-preview",
+    use_retrieval=True,
+    verbose=True,
+    )
+    file_id = assistant.upload_file("assistants_files/llama2_paper.pdf")
+    assistant.chat(file_ids=[file_id])
+```
+
 ### Contribution
 
 Contributions are what make the open-source community such an amazing place to learn, inspire, and create. Any contributions you make are **greatly appreciated**.
