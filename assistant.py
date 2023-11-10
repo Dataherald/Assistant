@@ -180,7 +180,21 @@ class AIAssistant:
         content = self.client.files.retrieve_content(file_id)
         with open(filename.split("/")[-1], 'w') as file:
             file.write(content)
-        
+
+    def upload_file(self, filename: str) -> str:
+        file = self.client.files.create(
+            file=open(filename, "rb"),
+            purpose='assistants'
+        )
+        return file.id
+    
+    def delete_file(self, file_id: str) -> bool:
+        file_deletion_status = self.client.beta.assistants.files.delete(
+            assistant_id=self.assistant.id,
+            file_id=file_id
+            )
+        return file_deletion_status.deleted
+
     def format_message(self, message: ThreadMessage) -> str:
         if getattr(message.content[0], "text", None) is not None:
             message_content = message.content[0].text
@@ -258,12 +272,12 @@ class AIAssistant:
                 time.sleep(0.5)
         return "\n" + self.extract_run_message(run=run, thread_id=thread_id)
     
-    def chat(self):
+    def chat(self, file_ids: list[str] = None):
         thread = self.create_thread()
         user_input = ""
         while user_input != "bye" and user_input != "exit":
             user_input = input("\033[32mYou (type bye to quit): ")
             message = self.create_response(
-            thread_id=thread.id, content=user_input
+            thread_id=thread.id, content=user_input, message_files=file_ids
             )
             print(f"\033[33m{message}")

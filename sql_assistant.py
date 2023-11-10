@@ -14,7 +14,7 @@ class GetDBSchema(Function):
         )
 
     def function(self):
-        conn = sqlite3.connect('Chinook.sqlite')
+        conn = sqlite3.connect('assistants_files/Chinook.sqlite')
         cursor = conn.cursor()
         cursor.execute("SELECT sql FROM sqlite_master WHERE type='table';")
         create_statements = cursor.fetchall()
@@ -37,7 +37,7 @@ class RunSQLQuery(Function):
         )
 
     def function(self, query):
-        conn = sqlite3.connect('Chinook.sqlite')
+        conn = sqlite3.connect('assistants_files/Chinook.sqlite')
         cursor = conn.cursor()
         cursor.execute(query)
         results = cursor.fetchall()
