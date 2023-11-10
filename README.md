@@ -100,6 +100,8 @@ To create an Assistant, you must create an object of the `Assistant` class. The 
 8. assistant_description (str, optional): Description of the Assistant. Defaults to "An AI Assistant".
 9. verbose (bool, optional): Enable verbose output. Defaults to False.
 
+An example is provided below:
+
 ```python
 from assistant import AIAssistant
 
@@ -109,6 +111,20 @@ assistant = AIAssistant(
     functions=[RunSQLQuery()],
     use_code_interpreter=True,
     )
+```
+
+You can start chatting with the assistant by craeting a thread and calling the chat() function like below: 
+
+```python
+thread = assistant.create_thread()
+user_input = ""
+while user_input != "bye":
+    print("\033[34mType your question or type bye to quit: ")
+    user_input = input("\033[32mYou: ")
+    message = assistant.chat(
+    thread_id=thread.id, content=user_input
+    )
+    print(f"\033[33m{message}")
 ```
 
 ### Contribution
