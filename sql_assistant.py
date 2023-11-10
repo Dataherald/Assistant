@@ -51,12 +51,4 @@ if __name__ == "__main__":
     functions=[GetDBSchema(), RunSQLQuery()],
     use_code_interpreter=True,
     )
-    thread = assistant.create_thread()
-    user_input = ""
-    while user_input != "bye":
-        print("\033[34mType your question or type bye to quit: ")
-        user_input = input("\033[32mYou: ")
-        message = assistant.chat(
-        thread_id=thread.id, content=user_input
-        )
-        print(f"\033[33m{message}")
+    assistant.chat()

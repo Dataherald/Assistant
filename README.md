@@ -113,18 +113,10 @@ assistant = AIAssistant(
     )
 ```
 
-You can start chatting with the assistant by craeting a thread and calling the chat() function like below: 
+You can start chatting with the assistant by simply calling the chat() function as follows: 
 
 ```python
-thread = assistant.create_thread()
-user_input = ""
-while user_input != "bye":
-    print("\033[34mType your question or type bye to quit: ")
-    user_input = input("\033[32mYou: ")
-    message = assistant.chat(
-    thread_id=thread.id, content=user_input
-    )
-    print(f"\033[33m{message}")
+assistant.chat()
 ```
 
 ### Contribution

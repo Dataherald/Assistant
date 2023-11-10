@@ -216,7 +216,7 @@ class AIAssistant:
                 return f"{message.role}: " + self.format_message(message=message)
         return "Assistant: No message found"
 
-    def chat(
+    def create_response(
         self,
         thread_id: str,
         content: str,
@@ -257,3 +257,13 @@ class AIAssistant:
                     print(f"\n{random_color}Run status: {run.status}")
                 time.sleep(0.5)
         return "\n" + self.extract_run_message(run=run, thread_id=thread_id)
+    
+    def chat(self):
+        thread = self.create_thread()
+        user_input = ""
+        while user_input != "bye" and user_input != "exit":
+            user_input = input("\033[32mYou (type bye to quit): ")
+            message = self.create_response(
+            thread_id=thread.id, content=user_input
+            )
+            print(f"\033[33m{message}")
