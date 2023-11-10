@@ -31,7 +31,8 @@ if __name__ == "__main__":
     assistant = AIAssistant(
     instruction="",
     model="gpt-3.5-turbo-1106",
-    functions=[DataheraldFunction()]
+    functions=[DataheraldFunction()],
+    use_code_interpreter=True,
     )
     assistant.chat()
     
