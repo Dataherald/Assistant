@@ -18,6 +18,7 @@ def answer_question(
     json_data = json.dumps(payload)
     response = requests.post(HOST, data=json_data)  
     if response.status_code == 201:
-        return response.json()['response']
+        engine_response = response.json()['response'] + '\n' + response.json()['sql_query_result']
+        return engine_response
     else:
         return "Sorry, I don't know the answer to that question."
