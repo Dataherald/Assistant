@@ -59,6 +59,7 @@ class AIAssistant:
     file_ids: list[str]
     conversation: Conversation
     verbose: bool
+    auto_delete: bool = True
 
     def __init__(
         self,
@@ -71,6 +72,7 @@ class AIAssistant:
         assistant_name: str = "AI Assistant",
         assistant_description: str = "An AI Assistant",
         verbose: bool = False,
+        auto_delete: bool = True,
     ):
         self.client = Client()
         self.instruction = instruction
@@ -99,6 +101,7 @@ class AIAssistant:
         self.threads = []
         self.conversation = Conversation(messages=[])
         self.verbose = verbose
+        self.auto_delete = auto_delete
 
     def delete_assistant_file_by_id(self, file_id: str):
         file_deletion_status = self.client.beta.assistants.files.delete(
@@ -281,3 +284,9 @@ class AIAssistant:
             thread_id=thread.id, content=user_input, message_files=file_ids
             )
             print(f"\033[33m{message}")
+        if self.auto_delete:
+            if file_ids:
+                for file in file_ids:
+                    self.delete_file(file_id=file)
+            self.client.beta.threads.delete(thread_id=thread.id)
+            self.client.beta.assistants.delete(assistant_id=self.assistant.id)
