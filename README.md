@@ -106,9 +106,12 @@ An example is provided below:
 from assistant import AIAssistant
 
 assistant = AIAssistant(
-    instruction="You are a SQL expert. User asks you questions about the Chinook database.",
+    instruction="""
+You are a SQL expert. User asks you questions about the Chinook database.
+First obtain the schema of the database to check the tables and columns, then generate SQL queries to answer the questions.
+""",
     model="gpt-3.5-turbo-1106",
-    functions=[RunSQLQuery()],
+    functions=[GetDBSchema(), RunSQLQuery()],
     use_code_interpreter=True,
     )
 ```
@@ -128,7 +131,6 @@ assistant = AIAssistant(
     instruction=""" You are a helpful agent that helps user with their question about LLMs.""",
     model="gpt-4-1106-preview",
     use_retrieval=True,
-    verbose=True,
     )
     file_id = assistant.upload_file("assistants_files/llama2_paper.pdf")
     assistant.chat(file_ids=[file_id])
