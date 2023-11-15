@@ -1,7 +1,9 @@
 from function import Function, Property
 from dotenv import load_dotenv
 from assistant import AIAssistant
-import sqlite3
+from sqlalchemy import create_engine, inspect
+from sqlalchemy import text
+from sqlalchemy.orm import sessionmaker
 
 load_dotenv()
 
@@ -10,22 +12,31 @@ class GetDBSchema(Function):
     def __init__(self):
         super().__init__(
             name="get_db_schema",
-            description="Get the schema of the Chinook database",
+            description="Get the schema of the database",
         )
 
     def function(self):
-        conn = sqlite3.connect('assistants_files/Chinook.sqlite')
-        cursor = conn.cursor()
-        cursor.execute("SELECT sql FROM sqlite_master WHERE type='table';")
-        create_statements = cursor.fetchall()
-        conn.close()
-        return '\n\n'.join([statement[0] for statement in create_statements])
+        engine = create_engine("sqlite:///assistants_files/Chinook.sqlite")
+        inspector = inspect(engine)
+        table_names = inspector.get_table_names()
+        schema_statements = []
+
+        for table_name in table_names:
+            table = inspector.get_columns(table_name)
+            create_statement = f"CREATE TABLE {table_name} (\n"
+            create_statement += ",\n".join(
+                f"{col['name']} {col['type']}" for col in table
+            )
+            create_statement += "\n);"
+            schema_statements.append(create_statement)
+
+        return "\n\n".join(schema_statements)
     
 class RunSQLQuery(Function):
     def __init__(self):
         super().__init__(
             name="run_sql_query",
-            description="Run a SQL query on the Chinook database",
+            description="Run a SQL query on the database",
             parameters=[
                 Property(
                     name="query",
@@ -33,16 +44,21 @@ class RunSQLQuery(Function):
                     type="string",
                     required=True,
                 ),
-            ]
+            ],
         )
 
     def function(self, query):
-        conn = sqlite3.connect('assistants_files/Chinook.sqlite')
-        cursor = conn.cursor()
-        cursor.execute(query)
-        results = cursor.fetchall()
-        conn.close()
-        return '\n'.join([str(result) for result in results])
+        engine = create_engine("sqlite:///assistants_files/Chinook.sqlite")
+        Session = sessionmaker(bind=engine)
+        session = Session()
+        try:
+            results = session.execute(text(query)).fetchall()
+            return '\n'.join([str(result) for result in results])
+        except Exception as e:
+            return str(e)
+        finally:
+            session.close()
+
     
 if __name__ == "__main__":
     assistant = AIAssistant(
@@ -50,7 +66,7 @@ if __name__ == "__main__":
 You are a SQL expert. User asks you questions about the Chinook database.
 First obtain the schema of the database to check the tables and columns, then generate SQL queries to answer the questions.
 """,
-    model="gpt-4-1106-preview",
+    model="gpt-3.5-turbo-1106",
     functions=[GetDBSchema(), RunSQLQuery()],
     use_code_interpreter=True,
     )
